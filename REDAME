@@ -1,0 +1,47 @@
+# Smart Home Automation System in Verilog
+
+This project implements a hardware-based **Smart Home Automation Controller** written in Verilog HDL. It intelligently manages domestic appliances based on sensor readings to optimize energy efficiency and secure the premises.
+
+## Features
+* **Master Control Switch**: Globally enables or disables the system.
+* **Automated Climate Control**: Monitors temperature data via an 8-bit bus.
+  * Temp < 24°C: All climate devices OFF.
+  * 24°C to 29°C: Fan turns ON.
+  * Temp ≥ 30°C: AC turns ON (Overrides Fan).
+* **Smart Ambient Lighting**: Activates lights automatically under two conditions:
+  * The environment is completely dark.
+  * The environment is dim **and** motion is actively detected.
+* **Intruder Alarm System**: Instantly triggers a high-level security output if motion is detected while the system is armed.
+
+## Port Descriptions
+
+| Port Name | Direction | Width | Description |
+| :--- | :--- | :--- | :--- |
+| `clk` | Input | 1-bit | Global system clock |
+| `rst` | Input | 1-bit | Active-high synchronous reset |
+| `master_switch` | Input | 1-bit | Master control system power switch |
+| `motion_sensor` | Input | 1-bit | Motion detection signal input |
+| `light_sensor` | Input | 2-bit | Ambient lux encoding (`00`=Bright, `01`=Dim, `10/11`=Dark) |
+| `temp_sensor` | Input | 8-bit | Environment temperature data in binary integers |
+| `light_out` | Output | 1-bit | Light actuator state control |
+| `fan_out` | Output | 1-bit | Fan speed motor relay control |
+| `ac_out` | Output | 1-bit | Air conditioner compressor relay control |
+| `alarm_out` | Output | 1-bit | Security siren/alarm actuator control |
+
+## How to Run the Simulation
+
+### Pre-requisites
+Ensure you have an HDL Simulator installed (e.g., **Icarus Verilog**, **ModelSim**, or **Xilinx Vivado**).
+
+### Execution via Icarus Verilog (CLI)
+1. Open your terminal and navigate to the project directory.
+2. Compile the source and testbench files:
+   ```bash
+   iverilog -o home_sim home_automation.v tb_home_automation.v
+   ```
+3. Run the compiled simulation file:
+   ```bash
+   vvp home_sim
+   ```
+4. (Optional) If you want to view the waveform, add `$dumpfile` and `$dumpvars` commands to the testbench initialization block and open the resulting `.vcd` file using **GTKWave**.
+5.

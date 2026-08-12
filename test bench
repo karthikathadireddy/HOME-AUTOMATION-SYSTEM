@@ -1,0 +1,87 @@
+`timescale 1ns / 1ps
+
+module tb_home_automation;
+
+    // Inputs
+    reg clk;
+    reg rst;
+    reg master_switch;
+    reg motion_sensor;
+    reg [1:0] light_sensor;
+    reg [7:0] temp_sensor;
+
+    // Outputs
+    wire light_out;
+    wire fan_out;
+    wire ac_out;
+    wire alarm_out;
+
+    // Instantiate Unit Under Test (UUT)
+    home_automation uut (
+        .clk(clk), 
+        .rst(rst), 
+        .master_switch(master_switch), 
+        .motion_sensor(motion_sensor), 
+        .light_sensor(light_sensor), 
+        .temp_sensor(temp_sensor), 
+        .light_out(light_out), 
+        .fan_out(fan_out), 
+        .ac_out(ac_out), 
+        .alarm_out(alarm_out)
+    );
+
+    // Clock generation (50MHz)
+    always #10 clk = ~clk;
+
+    initial begin
+        // Initialize Inputs
+        clk = 0;
+        rst = 1;
+        master_switch = 0;
+        motion_sensor = 0;
+        light_sensor = 2'b00;
+        temp_sensor = 8'd22;
+
+        // Apply Reset
+        #20 rst = 0;
+        
+        // Scenario 1: System OFF (Master Switch = 0)
+        // Even with motion and high temperature, outputs should stay OFF
+        #20;
+        master_switch = 0; motion_sensor = 1; temp_sensor = 8'd35;
+        
+        // Scenario 2: System ON & Safe/Idle State (Mild Day, Bright, No Motion)
+        #20;
+        master_switch = 1; motion_sensor = 0; temp_sensor = 8'd22; light_sensor = 2'b00;
+
+        // Scenario 3: Intruder Alert (Motion detected)
+        #20;
+        motion_sensor = 1;
+
+        // Scenario 4: Climate Control - Warm Day (Fan should turn ON, AC OFF)
+        #20;
+        motion_sensor = 0; temp_sensor = 8'd26;
+
+        // Scenario 5: Climate Control - Hot Day (AC should turn ON, Fan OFF)
+        #20;
+        temp_sensor = 8'd32;
+
+        // Scenario 6: Lighting - Pitch Dark
+        #20;
+        light_sensor = 2'b11;
+
+        // Scenario 7: Lighting - Dim room with motion
+        #20;
+        light_sensor = 2'b01; motion_sensor = 1;
+
+        #40;
+        $finish;
+    end
+      
+    // Console Output Monitor
+    initial begin
+        $monitor("Time=%0dns | Rst=%b | Master=%b | Motion=%b | LightSens=%b | Temp=%0d C || Light=%b | Fan=%b | AC=%b | Alarm=%b", 
+                 $time, rst, master_switch, motion_sensor, light_sensor, temp_sensor, light_out, fan_out, ac_out, alarm_out);
+    end
+      
+endmodule

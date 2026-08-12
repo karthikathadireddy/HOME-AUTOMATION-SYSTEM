@@ -1,0 +1,10 @@
+Time=0ns   | Rst=1 | Master=0 | Motion=0 | LightSens=00 | Temp=22 C || Light=0 | Fan=0 | AC=0 | Alarm=0
+Time=10ns  | Rst=1 | Master=0 | Motion=0 | LightSens=00 | Temp=22 C || Light=0 | Fan=0 | AC=0 | Alarm=0
+Time=20ns  | Rst=0 | Master=0 | Motion=0 | LightSens=00 | Temp=22 C || Light=0 | Fan=0 | AC=0 | Alarm=0
+Time=30ns  | Rst=0 | Master=0 | Motion=1 | LightSens=00 | Temp=35 C || Light=0 | Fan=0 | AC=0 | Alarm=0
+Time=50ns  | Rst=0 | Master=1 | Motion=0 | LightSens=00 | Temp=22 C || Light=0 | Fan=0 | AC=0 | Alarm=0
+Time=70ns  | Rst=0 | Master=1 | Motion=1 | LightSens=00 | Temp=22 C || Light=0 | Fan=0 | AC=0 | Alarm=1
+Time=90ns  | Rst=0 | Master=1 | Motion=0 | LightSens=00 | Temp=26 C || Light=0 | Fan=1 | AC=0 | Alarm=0
+Time=110ns | Rst=0 | Master=1 | Motion=0 | LightSens=00 | Temp=32 C || Light=0 | Fan=0 | AC=1 | Alarm=0
+Time=130ns | Rst=0 | Master=1 | Motion=0 | LightSens=11 | Temp=32 C || Light=1 | Fan=0 | AC=1 | Alarm=0
+Time=150ns | Rst=0 | Master=1 | Motion=1 | LightSens=01 | Temp=32 C || Light=1 | Fan=0 | AC=1 | Alarm=1

@@ -1,0 +1,55 @@
+module home_automation (
+    input wire clk,              // System clock
+    input wire rst,              // Active-high synchronous reset
+    input wire master_switch,    // Master control (1 = System ON, 0 = System OFF)
+    input wire motion_sensor,     // 1 = Motion detected (triggers alarm/lights)
+    input wire [1:0] light_sensor, // 00 = Bright, 01 = Dim, 10/11 = Dark
+    input wire [7:0] temp_sensor,  // 8-bit temperature value in Celsius
+    output reg light_out,        // 1 = Light ON, 0 = Light OFF
+    output reg fan_out,          // 1 = Fan ON, 0 = Fan OFF
+    output reg ac_out,           // 1 = AC ON, 0 = AC OFF
+    output reg alarm_out         // 1 = Alarm ON, 0 = Alarm OFF
+);
+
+    // Temperature Thresholds
+    parameter TEMP_HOT  = 8'd30; // Above 30°C: Turn on AC
+    parameter TEMP_WARM = 8'd24; // Above 24°C: Turn on Fan
+
+    always @(posedge clk) begin
+        if (rst) begin
+            light_out <= 1'b0;
+            fan_out   <= 1'b0;
+            ac_out    <= 1'b0;
+            alarm_out <= 1'b0;
+        end else if (!master_switch) begin
+            // Shut down all appliances if master switch is off
+            light_out <= 1'b0;
+            fan_out   <= 1'b0;
+            ac_out    <= 1'b0;
+            alarm_out <= 1'b0;
+        end else begin
+            // 1. Security Alarm Logic
+            alarm_out <= motion_sensor;
+
+            // 2. Smart Lighting Logic (Turns on if dark, or if dim and someone is moving)
+            if ((light_sensor >= 2'b10) || (light_sensor == 2'b01 && motion_sensor)) begin
+                light_out <= 1'b1;
+            end else begin
+                light_out <= 1'b0;
+            end
+
+            // 3. Climate Control Logic
+            if (temp_sensor >= TEMP_HOT) begin
+                ac_out  <= 1'b1;
+                fan_out <= 1'b0; // AC overrides Fan
+            end else if (temp_sensor >= TEMP_WARM) begin
+                ac_out  <= 1'b0;
+                fan_out <= 1'b1;
+            end else begin
+                ac_out  <= 1'b0;
+                fan_out <= 1'b0;
+            end
+        end
+    end
+
+endmodule
